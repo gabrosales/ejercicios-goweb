@@ -20,7 +20,7 @@ func main() {
 	products.GET("", handlers.GetAllProducts)
 	products.GET("/:id", handlers.GetProductById)
 	products.GET("/search", handlers.SearchProductsByPrice)
-	// products.POST("", handlers.CreateProduct)
+	products.POST("", handlers.CreateProduct)
 	r.Run() // escucha en 0.0.0.0:8080 por defecto
 
 }
