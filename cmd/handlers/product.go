@@ -29,7 +29,7 @@ func (p *Product) GetAll() gin.HandlerFunc {
 		}
 
 		// response
-		ctx.JSON(http.StatusOK, response.Ok("succeed to get websites", products))
+		ctx.JSON(http.StatusOK, response.Ok("succeed to get products", products))
 	}
 }
 
