@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"strconv"
+	"time"
 
 	"ejercicios-goweb/pkg/response"
 	"ejercicios-goweb/services"
@@ -82,12 +83,24 @@ func SearchProductsByPrice(c *gin.Context) {
 
 }
 
+const (
+	layout = "02/01/2006"
+)
+
+func DateValidation(fl validator.FieldLevel) bool {
+	_, err := time.Parse(layout, fl.Field().String())
+	if err != nil {
+		return false
+	}
+	return true
+}
+
 type Request struct {
 	Name         string  `json:"name" validate:"required"`
 	Quantity     int     `json:"quantity" validate:"required"`
 	Code_value   string  `json:"code_value" validate:"required"`
 	Is_published bool    `json:"is_published"`
-	Expiration   string  `json:"expiration" validate:"required"`
+	Expiration   string  `json:"expiration" validate:"required,date"`
 	Price        float64 `json:"price" validate:"required"`
 }
 
@@ -102,6 +115,7 @@ func CreateProduct(ctx *gin.Context) {
 
 	//validation
 	validate := validator.New()
+	validate.RegisterValidation("date", DateValidation)
 	if err := validate.Struct(&req); err != nil {
 		ctx.JSON(http.StatusUnprocessableEntity, response.Err(err))
 		return
