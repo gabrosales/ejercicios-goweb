@@ -210,3 +210,20 @@ func (p *Product) PartialUpdate() gin.HandlerFunc {
 		ctx.JSON(http.StatusOK, response.Ok("succeed to partial update product", pro))
 	}
 }
+
+func (p *Product) Delete() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		idParam := ctx.Param("id")
+		id, err := strconv.Atoi(idParam)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, response.Err(err))
+			return
+		}
+		err = p.sv.Delete(id)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, response.Err(err))
+			return
+		}
+		ctx.JSON(http.StatusAccepted, response.Ok("product deleted properly", nil))
+	}
+}

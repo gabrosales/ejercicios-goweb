@@ -30,9 +30,11 @@ func (r *Router) SetProduct() {
 
 	pro := r.en.Group("/products")
 	pro.GET("", h.GetAll())
-	pro.GET("/:id", h.GetByID())
+	pro.GET(":id", h.GetByID())
 	pro.GET("/search", h.SearchProductsByPrice())
 	pro.POST("", h.Create())
-	pro.PUT("/:id", h.Update())
-	pro.PATCH("/:id", h.PartialUpdate())
+	pro.PUT(":id", h.Update())
+	pro.PATCH(":id", h.PartialUpdate())
+	pro.DELETE(":id", h.Delete())
+
 }

@@ -18,6 +18,7 @@ type Service interface {
 
 	Create(name string, quantity int, code_value string, is_published bool, expiration string, price float64) (domain.Product, error)
 	Update(id int, name string, quantity int, code_value string, is_published bool, expiration string, price float64) (domain.Product, error)
+	Delete(id int) error
 }
 
 func NewService(rp Repository) Service {
@@ -98,4 +99,12 @@ func (sv *service) Update(id int, name string, quantity int, code_value string, 
 	}
 
 	return result, nil
+}
+
+func (sv *service) Delete(id int) error {
+	err := sv.rp.Delete(id)
+	if err != nil {
+		return err
+	}
+	return nil
 }

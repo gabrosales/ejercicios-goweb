@@ -20,6 +20,7 @@ type Repository interface {
 	// write
 	Create(domain.Product) (int, error)
 	Update(domain.Product) (domain.Product, error)
+	Delete(id int) error
 }
 
 type repository struct {
@@ -101,4 +102,14 @@ func (r *repository) Update(product domain.Product) (domain.Product, error) {
 	}
 
 	return domain.Product{}, fmt.Errorf("%w. %s", ErrNotFound, "Product does not exist")
+}
+
+func (r *repository) Delete(id int) error {
+	for i, pro := range *r.db {
+		if pro.ID == id {
+			(*r.db) = append((*r.db)[:i], (*r.db)[i+1:]...)
+			return nil
+		}
+	}
+	return errors.New("product not found")
 }
