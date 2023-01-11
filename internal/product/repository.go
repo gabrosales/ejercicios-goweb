@@ -19,7 +19,7 @@ type Repository interface {
 	SearchProductsByPrice(priceGt int) ([]domain.Product, error)
 	// write
 	Create(domain.Product) (int, error)
-	Update(domain.Product) error
+	Update(domain.Product) (domain.Product, error)
 }
 
 type repository struct {
@@ -91,14 +91,14 @@ func (r *repository) Create(product domain.Product) (int, error) {
 	return r.lastID, nil
 }
 
-func (r *repository) Update(product domain.Product) error {
+func (r *repository) Update(product domain.Product) (domain.Product, error) {
 
 	for i, pro := range *r.db {
 		if pro.ID == product.ID {
 			(*r.db)[i] = product
-			return nil
+			return product, nil
 		}
 	}
 
-	return fmt.Errorf("%w. %s", ErrNotFound, "Product does not exist")
+	return domain.Product{}, fmt.Errorf("%w. %s", ErrNotFound, "Product does not exist")
 }

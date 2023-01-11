@@ -34,4 +34,5 @@ func (r *Router) SetProduct() {
 	pro.GET("/search", h.SearchProductsByPrice())
 	pro.POST("", h.Create())
 	pro.PUT("/:id", h.Update())
+	pro.PATCH("/:id", h.PartialUpdate())
 }

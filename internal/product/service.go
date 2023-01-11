@@ -69,27 +69,30 @@ func (sv *service) Create(name string, quantity int, code_value string, is_publi
 }
 
 func (sv *service) Update(id int, name string, quantity int, code_value string, is_published bool, expiration string, price float64) (domain.Product, error) {
-	if !sv.rp.ExistId(id) {
+
+	p, err := sv.GetByID(id)
+
+	if err != nil {
 		return domain.Product{}, ErrNotExist
 	}
 
-	product := domain.Product{
-		ID:           id,
-		Name:         name,
-		Quantity:     quantity,
-		Code_value:   code_value,
-		Is_published: is_published,
-		Expiration:   expiration,
-		Price:        price,
+	if name != "" {
+		p.Name = name
+	}
+	if code_value != "" {
+		p.Code_value = code_value
+	}
+	if expiration != "" {
+		p.Expiration = expiration
+	}
+	if quantity > 0 {
+		p.Quantity = quantity
+	}
+	if price > 0 {
+		p.Price = price
 	}
 
-	err := sv.rp.Update(product)
-	if err != nil {
-		return domain.Product{}, err
-	}
-
-	result, err := sv.GetByID(id)
-
+	result, err := sv.rp.Update(p)
 	if err != nil {
 		return domain.Product{}, err
 	}
