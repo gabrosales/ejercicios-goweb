@@ -15,9 +15,11 @@ type Repository interface {
 	GetAll() ([]domain.Product, error)
 	GetByID(id int) (domain.Product, error)
 	ExistCode(url string) bool
+	ExistId(id int) bool
 	SearchProductsByPrice(priceGt int) ([]domain.Product, error)
 	// write
 	Create(domain.Product) (int, error)
+	Update(domain.Product) error
 }
 
 type repository struct {
@@ -70,6 +72,16 @@ func (r *repository) ExistCode(code_value string) bool {
 	return false
 }
 
+func (r *repository) ExistId(id int) bool {
+	for _, pro := range *r.db {
+		if pro.ID == id {
+			return true
+		}
+	}
+
+	return false
+}
+
 // write
 func (r *repository) Create(product domain.Product) (int, error) {
 	r.lastID++
@@ -77,4 +89,16 @@ func (r *repository) Create(product domain.Product) (int, error) {
 	*r.db = append(*r.db, product)
 
 	return r.lastID, nil
+}
+
+func (r *repository) Update(product domain.Product) error {
+
+	for i, pro := range *r.db {
+		if pro.ID == product.ID {
+			(*r.db)[i] = product
+			return nil
+		}
+	}
+
+	return fmt.Errorf("%w. %s", ErrNotFound, "Product does not exist")
 }

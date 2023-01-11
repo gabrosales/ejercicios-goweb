@@ -107,3 +107,40 @@ func (p *Product) Create() gin.HandlerFunc {
 
 	}
 }
+
+func (p *Product) Update() gin.HandlerFunc {
+	type Request struct {
+		Name         string  `json:"name" validate:"required"`
+		Quantity     int     `json:"quantity" validate:"required"`
+		Code_value   string  `json:"code_value" validate:"required"`
+		Is_published bool    `json:"is_published"`
+		Expiration   string  `json:"expiration" validate:"required,date"`
+		Price        float64 `json:"price" validate:"required"`
+	}
+
+	return func(ctx *gin.Context) {
+		// request
+		var req Request
+		if err := ctx.ShouldBindJSON(&req); err != nil {
+			ctx.JSON(http.StatusBadRequest, response.Err(err))
+			return
+		}
+
+		id, err := strconv.Atoi(ctx.Param("id"))
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, response.Err(err))
+			return
+		}
+
+		// process
+		pro, err := p.sv.Update(id, req.Name, req.Quantity, req.Code_value, req.Is_published, req.Expiration, req.Price)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, response.Err(err))
+			return
+		}
+
+		// response
+		ctx.JSON(http.StatusOK, response.Ok("succeed to update product", pro))
+
+	}
+}
