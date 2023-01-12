@@ -3,7 +3,9 @@ package handlers
 import (
 	"ejercicios-goweb/internal/product"
 	"ejercicios-goweb/pkg/response"
+	"errors"
 	"net/http"
+	"os"
 	"strconv"
 
 	"time"
@@ -103,6 +105,15 @@ func (p *Product) Create() gin.HandlerFunc {
 	}
 
 	return func(ctx *gin.Context) {
+
+		//Validate token
+		token := ctx.GetHeader("token")
+
+		if token != os.Getenv("TOKEN") {
+			ctx.JSON(http.StatusUnauthorized, response.Err(errors.New("Unauthorized")))
+			return
+		}
+
 		// request
 		var req Request
 		if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -142,6 +153,15 @@ func (p *Product) Update() gin.HandlerFunc {
 	}
 
 	return func(ctx *gin.Context) {
+
+		//Validate token
+		token := ctx.GetHeader("token")
+
+		if token != os.Getenv("TOKEN") {
+			ctx.JSON(http.StatusUnauthorized, response.Err(errors.New("Unauthorized")))
+			return
+		}
+
 		// request
 		var req RequestPut
 		if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -186,6 +206,15 @@ func (p *Product) PartialUpdate() gin.HandlerFunc {
 		Price        float64 `json:"price,omitempty"`
 	}
 	return func(ctx *gin.Context) {
+
+		//Validate token
+		token := ctx.GetHeader("token")
+
+		if token != os.Getenv("TOKEN") {
+			ctx.JSON(http.StatusUnauthorized, response.Err(errors.New("Unauthorized")))
+			return
+		}
+
 		// request
 		var req Request
 		if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -213,6 +242,14 @@ func (p *Product) PartialUpdate() gin.HandlerFunc {
 
 func (p *Product) Delete() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+		//Validate token
+		token := ctx.GetHeader("token")
+
+		if token != os.Getenv("TOKEN") {
+			ctx.JSON(http.StatusUnauthorized, response.Err(errors.New("Unauthorized")))
+			return
+		}
+
 		idParam := ctx.Param("id")
 		id, err := strconv.Atoi(idParam)
 		if err != nil {

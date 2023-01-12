@@ -6,6 +6,7 @@ import (
 	"ejercicios-goweb/internal/product"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 type Router struct {
@@ -23,6 +24,10 @@ func (r *Router) SetRoutes() {
 
 // product
 func (r *Router) SetProduct() {
+
+	//Load .env
+	_ = godotenv.Load()
+
 	// instances
 	rp := product.NewRepository(r.db, 500)
 	sv := product.NewService(rp)
